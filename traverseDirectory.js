@@ -22,7 +22,11 @@ async function traverseDirectory(dir){
     })
 }
 
-// Now iterate through all the files and retrieve the valid IP addresses
+/**
+ * Now iterate through all the files and retrieve the valid IP addresses.
+ * @input - list of all files with their paths
+ * @output - returns the list of valid IPs
+ */
 function readFiles(listOfFiles){
     var ipArray = [];
     for(let i = 0; i<listOfFiles.length; i++){
@@ -31,26 +35,24 @@ function readFiles(listOfFiles){
         // Getting the file data now and getting it in a single line
         const inputData = data.toString().replace(/\n/g, " ");
         
-        // Split the inputData into multiple texts on getting a space
-        //var texts = inputData.trim().split(" ");
-        var texts = lodash.map(lodash.split(inputData, " "), function(item) {
-            return item.trim();
-        })
         // Now write a regex pattern which tries to retrieve valid ip addresses 
-        const regexPatternIP = /\b^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$\b/gm;
+        const regexPatternIP = /\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\b/gm;
         
-        // Apply the regex pattern on the texts to get valid IP addresses
-        let output = lodash.map(texts, function(text){
-            return regexPatternIP.test(text) ? text: null;
-        })
+        // Get the matching IP address into an array
+        arr = inputData.match(regexPatternIP);
         
-        //arr = inputData.match(regexPatternIP);
-        arr = lodash.compact(output);
-        ipArray.push(arr);
+        // Push it to another array to account for multiple files
+        ipArray.push(lodash.compact(arr));
+        
     }
     return ipArray;
 }
 
+/**
+ * Function to get list of unique IPs
+ * @input - list of valid IPs including duplicates if any
+ * @output - returns only the list of distinct IPs
+ */
 function getUniqueArr(arr){
     let uniqueArr = [];
     for(let i of arr){
@@ -61,6 +63,9 @@ function getUniqueArr(arr){
     return uniqueArr;
 }
 
+/**
+ * Function main to initiate the test to retrieve valid IP addresses from the directories/files
+ */
 async function main(){
     let dir = "./root/devops/";
     await traverseDirectory(dir);
