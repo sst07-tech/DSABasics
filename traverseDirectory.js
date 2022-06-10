@@ -67,60 +67,66 @@ function getUniqueArr(arr){
  * Function main to initiate the test to retrieve valid IP addresses from the directories/files
  */
 async function main(){
-    let dir = "./root/devops/";
-    await traverseDirectory(dir);
     
-    // Get the list of all valid IPs from the filePaths
-    const ips = readFiles(allFiles);
+    try {
+        let dir = "./root/devops/";
+        await traverseDirectory(dir);
     
-    // Now flatten array as the current ips contains nested array
-    const ipFlatArrays = ips.flat();
+        // Get the list of all valid IPs from the filePaths
+        const ips = readFiles(allFiles);
+    
+        // Now flatten array as the current ips contains nested array
+        const ipFlatArrays = ips.flat();
    
-    //Program to remove duplicate value from array
-    let uniqueArr = getUniqueArr(ipFlatArrays);
+        //Program to remove duplicate value from array
+        let uniqueArr = getUniqueArr(ipFlatArrays);
     
-    //Program to sort the array in lexicographical order
-    for(let j=0; j < uniqueArr.length; j++){
-        for(let i = 0; i < uniqueArr.length; i++){
-            //Current index octet
-            let octetA = uniqueArr[i].split(".");
+        //Program to sort the array in lexicographical order
+        for(let j=0; j < uniqueArr.length; j++){
+            for(let i = 0; i < uniqueArr.length; i++){
+                //Current index octet
+                let octetA = uniqueArr[i].split(".");
 
-            let temp;
-            if(i < uniqueArr.length - 1){
-                // Next index Octet
-                let octetB = uniqueArr[i+1].split(".");
-                if(octetA[0].toString() > octetB[0].toString()){
-                    temp = uniqueArr[i];
-                    uniqueArr[i] = uniqueArr[i+1];
-                    uniqueArr[i+1] = temp;
-                } else if(octetA[0].toString() == octetB[0].toString()){
-                    if(octetA[1].toString() > octetB[1].toString()){
+                let temp;
+                if(i < uniqueArr.length - 1){
+                    // Next index Octet
+                    let octetB = uniqueArr[i+1].split(".");
+                    if(octetA[0].toString() > octetB[0].toString()){
                         temp = uniqueArr[i];
                         uniqueArr[i] = uniqueArr[i+1];
                         uniqueArr[i+1] = temp;
-                    }else if(octetA[1].toString() == octetB[1].toString()){
-                        if(octetA[2].toString() > octetB[2].toString()){
+                    } else if(octetA[0].toString() == octetB[0].toString()){
+                        if(octetA[1].toString() > octetB[1].toString()){
                             temp = uniqueArr[i];
                             uniqueArr[i] = uniqueArr[i+1];
                             uniqueArr[i+1] = temp;
-                        } else if(octetA[2].toString() == octetB[2].toString()){
-                            if(octetA[3].toString() > octetB[3].toString()){
+                        }else if(octetA[1].toString() == octetB[1].toString()){
+                            if(octetA[2].toString() > octetB[2].toString()){
                                 temp = uniqueArr[i];
                                 uniqueArr[i] = uniqueArr[i+1];
                                 uniqueArr[i+1] = temp;
+                            } else if(octetA[2].toString() == octetB[2].toString()){
+                                if(octetA[3].toString() > octetB[3].toString()){
+                                    temp = uniqueArr[i];
+                                    uniqueArr[i] = uniqueArr[i+1];
+                                    uniqueArr[i+1] = temp;
+                                }
                             }
                         }
                     }
                 }
-            }
             
+            }
         }
-    }
     
-    for(let i = 0; i < uniqueArr.length; i++){
-        console.log(uniqueArr[i]);
+        for(let i = 0; i < uniqueArr.length; i++){
+            console.log(uniqueArr[i]);
+        }
+    } catch(error) {
+        console.log(`Error occurred while trying to get list of distinct IP addresses in lexicographical order ${error}`);
+    } finally {
+        allFiles = [];
     }
-    allFiles = [];
 }
 
 main();
